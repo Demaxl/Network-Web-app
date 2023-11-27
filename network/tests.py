@@ -14,6 +14,7 @@ class ModelTestCase(TestCase):
 
 
     def testFollow(self):
+        """Test duplicate follows and same user follow"""
         # Test duplicate follows
         Follow.objects.create(following=self.user1, follower=self.user2)
         with self.assertRaises(ValidationError):

@@ -4,8 +4,14 @@ from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):
-    pass
+    def follow(self, user):
+        Follow.objects.create(follower=self, following=user)
 
+    def unfollow(self, user):
+        try:
+            Follow.objects.get(follower=self, following=user).delete()
+        except Follow.DoesNotExist:
+            ...
 
 class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")

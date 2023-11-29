@@ -25,7 +25,7 @@ class ModelTestCase(TestCase):
             Follow.objects.create(following=self.user1, follower=self.user1)
 
     def testLikes(self):
-        post = Post(poster=self.user1, title="A test title", body="a body my bro")
+        post = Post(poster=self.user1, body="a body my bro")
         post.save()
 
         # Test like

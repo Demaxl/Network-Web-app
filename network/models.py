@@ -15,14 +15,13 @@ class User(AbstractUser):
 
 class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
-    title = models.CharField(max_length=255)
     body = models.TextField(max_length=1000)
     date_time = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name="liked_posts", blank=True)
 
     def __str__(self):
-        return self.title
-    
+        return self.body[:20]
+        
     def like(self, user):
         if self.likes.contains(user):
             self.likes.remove(user)

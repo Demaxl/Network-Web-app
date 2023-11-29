@@ -24,4 +24,19 @@ class ModelTestCase(TestCase):
         with self.assertRaises(ValidationError):
             Follow.objects.create(following=self.user1, follower=self.user1)
 
+    def testLikes(self):
+        post = Post(poster=self.user1, title="A test title", body="a body my bro")
+        post.save()
+
+        # Test like
+        post.like(self.user2)
+        self.assertIn(self.user2, post.likes.all())
+
+        # Test unline
+        post.like(self.user2)
+        self.assertNotIn(self.user2, post.likes.all())
+
+        
+
+
         

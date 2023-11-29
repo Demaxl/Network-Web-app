@@ -18,10 +18,16 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField(max_length=1000)
     date_time = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(User, related_name="liked_posts")
+    likes = models.ManyToManyField(User, related_name="liked_posts", blank=True)
 
     def __str__(self):
         return self.title
+    
+    def like(self, user):
+        if self.likes.contains(user):
+            self.likes.remove(user)
+        else:
+            self.likes.add(user)
 
 class Follow(models.Model):
     following = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
@@ -35,7 +41,7 @@ class Follow(models.Model):
             raise ValidationError(f"{self.follower} can not follow themselves")
         
         return super().clean()
-
+        
     def save(self, *args, **kwargs):
         self.full_clean()
         return super().save(*args, **kwargs)

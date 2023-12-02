@@ -1,14 +1,27 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.contrib import messages
 
-from .models import User
+
+from .models import User, Post, Follow, Comment
 
 
 def index(request):
-    return render(request, "network/index.html")
+    if request.method == "POST":
+        body = request.POST['new-post']
+        Post.objects.create(
+            poster=request.user,
+            body=body
+        )
+        messages.success(request, "New post created!!")
+        return redirect("index")
+
+    return render(request, "network/index.html", {
+        "posts": Post.objects.all().order_by("-date_time")
+    })
 
 
 def login_view(request):

@@ -1,8 +1,10 @@
 from network.models import *
+import json
+from pprint import pprint
 
-users = ["hermione", "david", "sana", "adrian", "arthur", "harry"]
 
-for user in users:
-    user = User.objects.create_user(user, f"{user}@example.com", "Characters12345!")
-    user.save()
-    
+with open("MOCK_DATA.json", "r") as file:
+    data = json.load(file)
+
+for row in data:
+    Post.objects.create(**row)

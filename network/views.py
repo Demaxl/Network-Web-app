@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 
@@ -23,6 +23,16 @@ def index(request):
         "posts": Post.objects.all().order_by("-date_time")
     })
 
+
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+
+
+    return render(request, "network/profile.html", {
+        "object": user,
+        "posts": Post.objects.filter(poster=user).order_by("-date_time"),
+        "is_following": request.user.is_following(user) if request.user.is_authenticated else False
+    })
 
 def login_view(request):
     if request.method == "POST":

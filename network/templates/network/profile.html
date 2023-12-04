@@ -1,0 +1,64 @@
+{% extends "network/layout.html" %}
+
+{% block body %}    
+    
+<div class="container mt-5 mx-auto w-50">
+    <div class="row">
+        <div class="col-md-9">
+            <!-- User Information -->
+            <h2 class="text-center">{{ object.username }}</h2>
+            <p class="text-muted text-center">Joined {{ object.date_joined|date:"F d, Y" }}</p>
+
+            <div class="d-flex mx-auto w-50" style="gap:60%">
+                <div><strong>{{ object.followers.count }}</strong> Followers</div>
+                <div><strong>{{ object.following.count }}</strong> Following</div>
+            </div>
+            
+            {% if user.is_authenticated and object != user %}
+                <div class="text-center mt-4">
+                    <button href="#" class="btn btn-primary mx-5 w-50">
+                        {% if is_following %}
+                            Unfollow
+                        {% else %}
+                            Follow
+                        {% endif %}
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- User Posts -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>User Posts</h3>
+            {% for post in posts %}
+                <div class="border my-3 p-3">
+                    <h4>{{ post.poster }}</h4>
+                    {% if user.is_authenticated and user == post.poster %}
+                        <a href="#" class="btn btn-link m-0 p-0">Edit</a>
+                    {% endif %}
+                    <p>{{ post.body}} </p>
+                    <p class="text-muted">{{ post.date_time }}</p>
+                    <p>
+                        <a 
+                            href="javascript:void(0)" 
+                            uk-icon="heart"
+                            style="color:blue" 
+                            {% if user.is_authenticated and user in post.likes.all %}class="liked-btn"{% endif %}
+                            >
+                        </a>
+                        {{ post.likes.count }}
+                    </p>
+                    
+                </div>
+            {% endfor %}
+
+            <!-- Add more posts as needed -->
+        </div>
+    </div>
+</div>
+
+{% endblock body %} 
+
+

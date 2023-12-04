@@ -6,6 +6,9 @@ from django.core.exceptions import ValidationError
 class User(AbstractUser):
     def follow(self, user):
         Follow.objects.create(follower=self, following=user)
+    
+    def is_following(self, user):
+        return Follow.objects.filter(follower=self, following=user).exists()
 
     def unfollow(self, user):
         try:

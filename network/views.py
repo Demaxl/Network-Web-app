@@ -6,11 +6,12 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-
+from pprint import pprint
 from .models import User, Post, Follow, Comment
 
 
 def index(request):
+    pprint(dir(request))
     if request.method == "POST":
         body = request.POST['new-post']
         Post.objects.create(

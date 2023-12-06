@@ -1,6 +1,7 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
@@ -25,6 +26,17 @@ def index(request):
         "headline": "All Posts"
     })
 
+
+def toggle_follow(request):
+    body = json.loads(request.body.decode())
+    user = get_object_or_404(User, username=body['username'])
+
+    if body['action'] == "FOLLOW":
+        request.user.follow(user)
+    else:
+        request.user.unfollow(user)
+
+    return JsonResponse({"success": "ok"})
 
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)

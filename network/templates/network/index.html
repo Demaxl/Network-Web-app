@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="container-fluid">
-        <h1 class="display-4">All Posts</h1>
+        <h1 class="display-4">{{ headline }}</h1>
         <div>
             {% if user.is_authenticated %}
                 <form method="post">

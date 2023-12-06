@@ -16,6 +16,13 @@ class User(AbstractUser):
         except Follow.DoesNotExist:
             ...
 
+    def get_followers(self):
+        return [follow.follower for follow in self.followers.all()]
+    
+    def get_followings(self):
+        return [follow.following for follow in self.following.all()]
+        
+
 class Post(models.Model):
     poster = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     body = models.TextField(max_length=1000)

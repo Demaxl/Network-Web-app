@@ -11,7 +11,6 @@ from .models import User, Post, Follow, Comment
 
 
 def index(request):
-    pprint(dir(request))
     if request.method == "POST":
         body = request.POST['new-post']
         Post.objects.create(
@@ -37,7 +36,7 @@ def profile_view(request, username):
         "is_following": request.user.is_following(user) if request.user.is_authenticated else False
     })
 
-@login_required
+@login_required(login_url="login")
 def following_view(request):
     return render(request, "network/index.html", {
         "posts": Post.objects.filter(poster__in=request.user.get_followings()).order_by("-date_time"),
@@ -46,7 +45,6 @@ def following_view(request):
 
 def login_view(request):
     if request.method == "POST":
-
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
@@ -55,13 +53,15 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(request.POST.get("next"))
         else:
             return render(request, "network/login.html", {
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "network/login.html")
+        return render(request, "network/login.html", {
+            "next": request.GET.get("next", reverse("index"))
+        })
 
 
 def logout_view(request):

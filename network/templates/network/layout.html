@@ -29,7 +29,8 @@
         <script>
             const apiURLS = {
                 "FOLLOW_URL":"{% url 'api-follow' %}",
-                "EDIT_URL": "{% url 'api-edit-post' %}"
+                "EDIT_URL": "{% url 'api-edit-post' %}",
+                "LIKE_URL": "{% url 'api-like-post' %}"
             }
         </script>
     </head>
@@ -76,6 +77,7 @@
                     
                 {% endfor %}
             {% endif %}
+            {% csrf_token %}
             {% block body %}
             {% endblock %}
         </div>

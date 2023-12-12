@@ -1,5 +1,29 @@
 const posts = {};
 
+function showMessage(text, type) {
+    const html =  `
+
+        <div class="alert alert-${type} alert-dismissible fade show m-3" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            ${text}
+        </div>
+    `
+    // Create a temporary container element
+    const tempContainer = document.createElement('div');
+
+    // Set the innerHTML of the container to your HTML string
+    tempContainer.innerHTML = html;
+
+    // Get the first child of the container (the created div element)
+    const alertElement = tempContainer.firstElementChild;
+
+    // Get the target element where you want to append the new element
+    const targetElement = document.querySelector('.body'); // Adjust the selector as needed
+
+    // Insert the new element before the content
+    targetElement.insertAdjacentElement('beforebegin', alertElement);
+}
+
 async function toggleFollow(btn) {
     const response = await fetch(apiURLS['FOLLOW_URL'], {
         method: "POST",
@@ -54,7 +78,7 @@ async function editPostRequest(div) {
     const post = div.querySelector("textarea").value
 
     const response = await fetch(apiURLS['EDIT_URL'], {
-        method: "POST",
+        method: "PUT",
         headers: {
             "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value,
         },
@@ -73,4 +97,30 @@ async function editPostRequest(div) {
 
     }
 
+}
+
+
+async function likePost(btn, postId) {
+    const response = await fetch(apiURLS['LIKE_URL'], {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value,
+        },
+        mode: "same-origin",
+        body: JSON.stringify({
+            "postId": postId
+        })
+    });
+
+    const json = await response.json();
+
+    if (json.hasOwnProperty("success")) {
+        const status = json['status']
+        const div = document.querySelector(`#post-${postId}`)
+
+        div.outerHTML = json['post']
+    
+    } else {
+        showMessage(json['error'], "danger")
+    }
 }

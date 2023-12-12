@@ -35,8 +35,10 @@ class Post(models.Model):
     def like(self, user):
         if self.likes.contains(user):
             self.likes.remove(user)
+            return "UNLIKED"
         else:
             self.likes.add(user)
+            return "LIKED"
 
 class Follow(models.Model):
     following = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")

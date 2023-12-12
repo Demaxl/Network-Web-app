@@ -49,6 +49,9 @@ def toggle_follow(request):
     return JsonResponse({"success": "ok"})
 
 def edit(request):
+    if request.method != "PUT":
+        return JsonResponse({"error":"method not allowed"}, status=405)
+    
     body = json.loads(request.body.decode())
 
     post = get_object_or_404(Post, pk=int(body['postId']))
@@ -65,6 +68,23 @@ def edit(request):
         "success": "ok",
         "post": template.render({"post":post, "user":request.user})
         })
+
+def like(request):
+    body = json.loads(request.body.decode())
+
+    post = get_object_or_404(Post, pk=int(body['postId']))
+
+    if not request.user.is_authenticated:
+        return JsonResponse({"error":"You must be logged in to like posts"}, status=401)
+    
+    post.like(request.user)
+    template = loader.get_template("network/post.html")
+
+    return JsonResponse({
+        "success": "ok",
+        "post": template.render({"post": post, "user": request.user})
+    })
+
 
 
 def profile_view(request, username):

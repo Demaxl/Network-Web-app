@@ -1,4 +1,4 @@
-<div class="border my-3 p-3 post-container" data-post-id={{post.id}}>
+<div class="border my-3 p-3 post-container" data-post-id={{post.id}} id="post-{{ post.id }}">
     <h4 class="post-poster"><a href="{% url 'profile' post.poster %}">{{ post.poster }}</a></h4>
     {% if user.is_authenticated and user == post.poster %}
         <a href="javascript:void(0)" class="btn btn-link m-0 p-0" onclick="editPost(this)" >Edit</a>
@@ -11,6 +11,7 @@
             uk-icon="heart"
             style="color:blue" 
             {% if user.is_authenticated and user in post.likes.all %}class="liked-btn"{% endif %}
+            onclick="likePost(this, {{ post.id }})"
             >
         </a>
         <!-- -->

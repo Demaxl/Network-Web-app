@@ -38,7 +38,7 @@
     <div class="row mt-4">
         <div class="col-md-12">
             <h3>User Posts</h3>
-            {% for post in posts %}
+            {% for post in page_obj %}
                 <div class="border my-3 p-3">
                     <h4>{{ post.poster }}</h4>
                     {% if user.is_authenticated and user == post.poster %}
@@ -59,6 +59,7 @@
                     
                 </div>
             {% endfor %}
+            {% include 'network/pagination.html' %}
 
             <!-- Add more posts as needed -->
         </div>

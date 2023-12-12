@@ -6,9 +6,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 from pprint import pprint
 from .models import User, Post, Follow, Comment
+
+
+def paginate(request, queryset):
+    p = Paginator(queryset, 10)
+
+    page_num = request.GET.get("page", 1)
+    page_obj = p.get_page(page_num)
+    return page_obj
 
 
 def index(request):
@@ -22,7 +31,7 @@ def index(request):
         return redirect("index")
 
     return render(request, "network/index.html", {
-        "posts": Post.objects.all().order_by("-date_time"),
+        "page_obj": paginate(request, Post.objects.all().order_by("-date_time")),
         "headline": "All Posts"
     })
 
@@ -44,14 +53,14 @@ def profile_view(request, username):
 
     return render(request, "network/profile.html", {
         "object": user,
-        "posts": Post.objects.filter(poster=user).order_by("-date_time"),
+        "page_obj": paginate(request, Post.objects.filter(poster=user).order_by("-date_time")),
         "is_following": request.user.is_following(user) if request.user.is_authenticated else False
     })
 
 @login_required(login_url="login")
 def following_view(request):
     return render(request, "network/index.html", {
-        "posts": Post.objects.filter(poster__in=request.user.get_followings()).order_by("-date_time"),
+        "page_obj": paginate(request, Post.objects.filter(poster__in=request.user.get_followings()).order_by("-date_time")),
         "headline": "Following Page"
     })
 

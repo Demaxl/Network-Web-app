@@ -1,0 +1,19 @@
+<div class="border my-3 p-3">
+    <h4>{{ post.poster }}</h4>
+    {% if user.is_authenticated and user == post.poster %}
+        <a href="#" class="btn btn-link m-0 p-0">Edit</a>
+    {% endif %}
+    <p>{{ post.body}} </p>
+    <p class="text-muted">{{ post.date_time }}</p>
+    <p>
+        <a 
+            href="javascript:void(0)" 
+            uk-icon="heart"
+            style="color:blue" 
+            {% if user.is_authenticated and user in post.likes.all %}class="liked-btn"{% endif %}
+            >
+        </a>
+        {{ post.likes.count }}
+    </p>
+
+</div>

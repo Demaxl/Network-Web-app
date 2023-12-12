@@ -1,9 +1,9 @@
-<div class="border my-3 p-3">
-    <h4>{{ post.poster }}</h4>
+<div class="border my-3 p-3 post-container" id="post-{{ counter }}">
+    <h4 class="post-poster"><a href="{% url 'profile' post.poster %}">{{ post.poster }}</a></h4>
     {% if user.is_authenticated and user == post.poster %}
-        <a href="#" class="btn btn-link m-0 p-0">Edit</a>
+        <a href="javascript:void(0)" class="btn btn-link m-0 p-0" onclick="editPost(this)" >Edit</a>
     {% endif %}
-    <p>{{ post.body}} </p>
+    <p class='post-body'>{{ post.body}} </p>
     <p class="text-muted">{{ post.date_time }}</p>
     <p>
         <a 
@@ -13,7 +13,7 @@
             {% if user.is_authenticated and user in post.likes.all %}class="liked-btn"{% endif %}
             >
         </a>
+        <!-- -->
         {{ post.likes.count }}
     </p>
-
 </div>

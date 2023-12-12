@@ -10,5 +10,6 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("register/", views.register, name="register"),
-    path("api/follow", views.toggle_follow, name="api-follow")
+    path("api/follow", views.toggle_follow, name="api-follow"),
+    path("api/edit", views.edit, name="api-edit-post")
 ]

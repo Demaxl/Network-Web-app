@@ -15,7 +15,9 @@
                 </form>
             {% endif %}
             {% for post in page_obj.object_list %}
-                {% include "network/post.html" with post=post user=user %}
+                {% with post=post user=user counter=forloop.counter %}
+                    {% include "network/post.html" with post=post user=user counter=counter %}
+                {% endwith %}
             {% endfor %}
         </div>
 

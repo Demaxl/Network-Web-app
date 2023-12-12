@@ -39,7 +39,9 @@
         <div class="col-md-12">
             <h3>User Posts</h3>
             {% for post in page_obj %}
-                {% include "network/post.html" with post=post user=user %}
+                {% with post=post user=user counter=forloop.counter %}
+                    {% include "network/post.html" with post=post user=user counter=counter %}
+                {% endwith %}
             {% endfor %}
             {% include 'network/pagination.html' %}
 

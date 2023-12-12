@@ -1,4 +1,4 @@
-import json
+import json, bleach
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.template import loader
 
 from pprint import pprint
 from .models import User, Post, Follow, Comment
@@ -46,6 +47,25 @@ def toggle_follow(request):
         request.user.unfollow(user)
 
     return JsonResponse({"success": "ok"})
+
+def edit(request):
+    body = json.loads(request.body.decode())
+
+    post = get_object_or_404(Post, pk=int(body['postId']))
+
+    if request.user != post.poster:
+        return JsonResponse({"error": "Only poster can edit this post"}, status=403)
+    
+    post.body = bleach.clean(body['postBody'])
+    post.save()
+
+    template = loader.get_template("network/post.html")
+
+    return JsonResponse({
+        "success": "ok",
+        "post": template.render({"post":post, "user":request.user})
+        })
+
 
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)

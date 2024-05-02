@@ -1,0 +1,39 @@
+name: social-network-web-app
+version: '3'
+
+services:
+  web:
+    container_name: network-app
+    build: 
+      context: .
+      dockerfile: Dockerfile
+
+    # command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+  
+  db:
+    container_name: network-app-db
+    image: mysql
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    expose:
+      - 3306
+    env_file:
+      - ./.env
+    healthcheck:
+      test: ["CMD", "mysql", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}", "-e", "SELECT 1"]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  db-data:
+

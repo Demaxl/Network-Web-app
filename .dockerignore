@@ -1,0 +1,5 @@
+env
+MOCK_DATA.json
+generate.py
+**/__pycache__/
+staticfiles

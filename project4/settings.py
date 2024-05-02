@@ -11,21 +11,32 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import environ  
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '13kl@xtukpwe&xj2xoysxe9_6=tf@f8ewxer5n&ifnd46+6$%8'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+if DEBUG:
+    ALLOWED_HOSTS = []
+else:
+    ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -42,6 +53,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -76,6 +88,21 @@ WSGI_APPLICATION = 'project4.wsgi.application'
 
 DATABASES = {
     'default': {
+        # Django engine for Mysql
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env("MYSQL_DATABASE"),  # name of the database
+        'USER': env("DATABASE_USER"),   # credentials
+        'PASSWORD': env("MYSQL_ROOT_PASSWORD"),
+        # the ip address where the databases is stored. In this case, localhost
+        'HOST': env("DATABASE_HOST", default="db"),
+        'PORT': env("DATABASE_PORT", default="3306"),   # Port number where its stored
+        'OPTIONS': {
+            # STRICT_TRANS_TABLES is a mode in mysql that uses strict enforcment of constraints when
+            # transactions are made on a table
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
+    }, 
+    'test_db': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
@@ -120,3 +147,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

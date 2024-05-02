@@ -33,7 +33,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-if not DEBUG:
+if DEBUG:
     ALLOWED_HOSTS = []
 else:
     ALLOWED_HOSTS = ["*"]
@@ -90,19 +90,19 @@ DATABASES = {
     'default': {
         # Django engine for Mysql
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("DATABASE_NAME"),  # name of the database
+        'NAME': env("MYSQL_DATABASE"),  # name of the database
         'USER': env("DATABASE_USER"),   # credentials
-        'PASSWORD': env("DATABASE_PASSWORD"),
+        'PASSWORD': env("MYSQL_ROOT_PASSWORD"),
         # the ip address where the databases is stored. In this case, localhost
-        'HOST': env("DATABASE_HOST"),
-        'PORT': env("DATABASE_PORT"),   # Port number where its stored
+        'HOST': env("DATABASE_HOST", default="db"),
+        'PORT': env("DATABASE_PORT", default="3306"),   # Port number where its stored
         'OPTIONS': {
             # STRICT_TRANS_TABLES is a mode in mysql that uses strict enforcment of constraints when
             # transactions are made on a table
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }
     }, 
-    'dev_db': {
+    'test_db': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
@@ -156,3 +156,5 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

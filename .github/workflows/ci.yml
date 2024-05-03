@@ -1,4 +1,4 @@
-name: Django CI
+name: Django CI Testing
 
 on:
   push:
@@ -10,6 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      ENVIRONMENT: development
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
       DATABASE_USER: ${{ secrets.DATABASE_USER }}

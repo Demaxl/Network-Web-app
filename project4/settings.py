@@ -85,28 +85,35 @@ WSGI_APPLICATION = 'project4.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        # Django engine for Mysql
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("MYSQL_DATABASE"),  # name of the database
-        'USER': env("DATABASE_USER"),   # credentials
-        'PASSWORD': env("MYSQL_ROOT_PASSWORD"),
-        # the ip address where the databases is stored. In this case, localhost
-        'HOST': env("DATABASE_HOST", default="db"),
-        'PORT': env("DATABASE_PORT", default="3306"),   # Port number where its stored
-        'OPTIONS': {
-            # STRICT_TRANS_TABLES is a mode in mysql that uses strict enforcment of constraints when
-            # transactions are made on a table
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+if env("ENVIRONMENT") == "production":
+    DATABASES = {
+        'default': {
+            # Django engine for Mysql
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': env("MYSQL_DATABASE"),  # name of the database
+            'USER': env("DATABASE_USER"),   # credentials
+            'PASSWORD': env("MYSQL_ROOT_PASSWORD"),
+            # the ip address where the databases is stored. In this case, localhost
+            'HOST': env("DATABASE_HOST", default="db"),
+            'PORT': env("DATABASE_PORT", default="3306"),   # Port number where its stored
+            'OPTIONS': {
+                # STRICT_TRANS_TABLES is a mode in mysql that uses strict enforcment of constraints when
+                # transactions are made on a table
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+            }
+        }, 
+        'test_db': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
-    }, 
-    'test_db': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 AUTH_USER_MODEL = "network.User"
 

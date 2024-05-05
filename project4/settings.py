@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import sys
 import environ  
 
 env = environ.Env(
@@ -18,6 +19,7 @@ env = environ.Env(
     DEBUG=(bool, False)
 )
 
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -85,7 +87,9 @@ WSGI_APPLICATION = 'project4.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-if env("ENVIRONMENT") == "production":
+
+
+if env("ENVIRONMENT") == "production" and not TESTING:
     DATABASES = {
         'default': {
             # Django engine for Mysql
@@ -101,8 +105,8 @@ if env("ENVIRONMENT") == "production":
                 # transactions are made on a table
                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
             }
-        }, 
-        'test_db': {
+        },
+        "test_db": {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
@@ -114,6 +118,7 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
+
 
 AUTH_USER_MODEL = "network.User"
 

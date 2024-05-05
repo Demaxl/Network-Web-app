@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import sys
 import environ  
+import dj_database_url
 
 env = environ.Env(
     # set casting, default value
@@ -37,6 +38,8 @@ DEBUG = env('DEBUG')
 
 if DEBUG:
     ALLOWED_HOSTS = []
+elif env("ENVIRONMENT") == "production":
+    ALLOWED_HOSTS = ["*"]
 else:
     ALLOWED_HOSTS = ["localhost", '127.0.0.1']
 
@@ -89,7 +92,22 @@ WSGI_APPLICATION = 'project4.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 
-if env("ENVIRONMENT") == "production" and not TESTING:
+if env("ENVIRONMENT") == "production":
+    DATABASES = {
+        "default": dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        ),
+    }
+elif TESTING:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+else:
     DATABASES = {
         'default': {
             # Django engine for Mysql
@@ -99,7 +117,8 @@ if env("ENVIRONMENT") == "production" and not TESTING:
             'PASSWORD': env("MYSQL_ROOT_PASSWORD"),
             # the ip address where the databases is stored. In this case, localhost
             'HOST': env("DATABASE_HOST", default="db"),
-            'PORT': env("DATABASE_PORT", default="3306"),   # Port number where its stored
+            # Port number where its stored
+            'PORT': env("DATABASE_PORT", default="3306"),
             'OPTIONS': {
                 # STRICT_TRANS_TABLES is a mode in mysql that uses strict enforcment of constraints when
                 # transactions are made on a table
@@ -107,13 +126,6 @@ if env("ENVIRONMENT") == "production" and not TESTING:
             }
         },
         "test_db": {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }

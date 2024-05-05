@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 RUN python3 manage.py collectstatic --noinput
-CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD gunicorn project4.wsgi --bind 0.0.0.0:$PORT

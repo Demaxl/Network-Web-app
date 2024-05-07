@@ -5,3 +5,4 @@ generate.py
 db.sqlite3
 .env
 staticfiles
+data.json

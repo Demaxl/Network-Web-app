@@ -24,7 +24,7 @@ TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'), overwrite=True)
 
 
 # Quick-start development settings - unsuitable for production
@@ -110,21 +110,14 @@ elif TESTING:
 else:
     DATABASES = {
         'default': {
-            # Django engine for Mysql
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': env("MYSQL_DATABASE"),  # name of the database
-            'USER': env("DATABASE_USER"),   # credentials
-            'PASSWORD': env("MYSQL_ROOT_PASSWORD"),
-            # the ip address where the databases is stored. In this case, localhost
-            'HOST': env("DATABASE_HOST", default="db"),
-            # Port number where its stored
-            'PORT': env("DATABASE_PORT", default="3306"),
-            'OPTIONS': {
-                # STRICT_TRANS_TABLES is a mode in mysql that uses strict enforcment of constraints when
-                # transactions are made on a table
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-            }
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env("DATABASE_NAME"),
+            'USER': env("DATABASE_USER"),
+            'PASSWORD': env("DATABASE_PASSWORD"),
+            'HOST': env("DATABASE_HOST"),
+            'PORT': env("DATABASE_PORT")
         },
+        
         "test_db": {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
